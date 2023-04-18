@@ -1,80 +1,1 @@
-# Big Picture EventStorming
-
-We started the domain exploration with sticky notes and a pen. What turned out to be the first discovery,
-was the **close-ended book holding** process:
-  
-![Close ended book holding](images/es/bigpicture/close-ended-holding-process.png)  
-  
-Let's briefly walk through it:
-- A **Regular Patron** can **place a book on a close-ended hold**  
-- A **Regular Patron** might **reach a maximum holds number** after a **hold is placed**  
-- A **Regular Patron** can either **cancel the hold** or **check out the book**  
-- While the book is **checked out** the **hold is completed** and so the **returning process** starts  
-- Whenever a new day starts, we check the **daily sheet** if a hold is not hanging for too long. If so,
-the **book hold is expired**  
-
-On the high level, the process looks clear now, but it does not work the way, that all of us
-interpreted each word written no the sticky note similarly. That's why we established some definitions:  
-
-![Definitions](images/es/bigpicture/definitions-1.png)  
-
-Similar discoveries were made around **open-ened book holding** process:  
-
-![Open ended book holding](images/es/bigpicture/open-ended-holding-process.png)  
-
-- A **Researcher Patron** can **place a book on an open-ended hold**
-- A **Researcher Patron** can either **cancel the hold** or **checkout a book**
-- While the book is **checkedout** the **hold is completed** and so the **returning process** starts
-- Within the **open-ended holding** a **hold** cannot **expire** (mind the lack of **hold expired** event)
-
-All right. These two processes are very similar. The part that they have in common, and we know nothing about
-it yet is called the **book returning process**:
-
-![Book returning process](images/es/bigpicture/the-book-returning-process.png)  
-
-Here's what you see there described with words:
-- **Any Patron** can **return a book**
-- If the **checkout is overdue**, it is being unregistered as soon as the **book is returned**
-- In the moment of **returning a book** we start the process of **Fees application**
-- From the moment of **book checkout**, a patron might not return the book on time. Whenever a **new day starts**
-we check the **daily sheet** find and **register overdue checkouts**
-
-Wait, but what is this **checkout**?  
-
-![Definitions](images/es/bigpicture/definitions-2.png)  
-
-_- OK, now tell me what is this fee application process_  
-_- Nope, it is not relevant by now, will get back to it later_  
-_- But wait, why? Shouldn't you get the full picture from the storming?_  
-_- Yes, but remember, the time has its cost. You always need to focus on the most relevant (at this moment) business part.
-I promise to get back to this at the next workshop._  
-_- Fair enough!_  
-
-Fundamental question that raises now is _where do these books come from?_ Looking again at the domain description,
-we have a notion of a **catalogue**. We modelled it accordingly:  
-
-![Catalogue](images/es/bigpicture/book-catalogue.png)   
-
-Here's what happens:
-- A **library employee** can add a book into a catalogue
-- A specific **book instance** can be **added** as well, thanks to which it can be made **available** under some not 
-defined yet policy
-- Both **Book removed from catalogue** and **Book instance removed from catalogue** are marked with **hot spots**,
-as they became problematic. We left answering those problems for the future.  
-
-There is one interesting thing we can spot in this simple **catalogue** flow. **A book** is not the same **book** that
-we had in previous processes. To make things clear, let's have a look at new definitions:
-
-![Catalogue definitions](images/es/bigpicture/book-catalogue-definitions.png)    
-
-Spotting such differences helps us in drawing linguistic boundaries, that are one of the heuristics for defining 
-**bounded contexts**. From this moment on, we can assume that we have at least two **bounded contexts**:
-* **lending** - context containing all business processes logically connected with book lending, including holding, 
-checkout, and return
-* **catalogue** - contexts for cataloguing books and their instances
-
-__More information on bounded contexts' defining will be added soon__
-
-This is more or less where the first iteration of _Big Picture EventStorming_ finished. After this phase
-we had a good understanding of how library processes work on high level, and, what is an invaluable outcome,
-we got the **ubiquitous language** including well described definitions, and initial **bounded contexts**.
+# Big Picture EventStorming 大局观事件风暴We started the domain exploration with sticky notes and a pen. What turned out to be the first discovery,was the **close-ended book holding** process:我们从便签纸和笔开始探索领域。首先发现的是**有限期图书预留** 过程：![Close ended book holding](images/es/bigpicture/close-ended-holding-process.png)  Let's briefly walk through it:让我们简要回顾一下：- A **Regular Patron** can **place a book on a close-ended hold**    **普通读者**可以**预留有限期图书**- A **Regular Patron** might **reach a maximum holds number** after a **hold is placed**    在**预留成功后**，**普通读者**可能**达到最大预留数量**- A **Regular Patron** can either **cancel the hold** or **check out the book**    **普通读者**可以选择**取消预留**或**借阅图书**- While the book is **checked out** the **hold is completed** and so the **returning process** starts    当图书**被借阅**时，**预留完成**，开始**归还过程**- Whenever a new day starts, we check the **daily sheet** if a hold is not hanging for too long. If so,the **book hold is expired**    每当新的一天开始时，我们检查**每日表格**，看看是否有预留时间过长的情况。如果是这样，图书**预留过期**On the high level, the process looks clear now, but it does not work the way, that all of usinterpreted each word written no the sticky note similarly. That's why we established some definitions:  从高层次来看，这个过程现在看起来很清晰，但并不是所有人都以类似的方式解释便签纸上写的每个词。这就是为什么我们建立了一些定义：![Definitions](images/es/bigpicture/definitions-1.png)  Similar discoveries were made around **open-ened book holding** process:  类似的发现围绕着**无限期图书预留**过程：![Open ended book holding](images/es/bigpicture/open-ended-holding-process.png)  - A **Researcher Patron** can **place a book on an open-ended hold**    研究员读者可以预留无限期图书- A **Researcher Patron** can either **cancel the hold** or **checkout a book**    研究员读者可以选择取消预留或借阅图书- While the book is **checkedout** the **hold is completed** and so the **returning process** starts    当图书被借阅时，预留完成，开始归还过程- Within the **open-ended holding** a **hold** cannot **expire** (mind the lack of **hold expired** event)    在无限期预留中，预留不能过期（注意没有预留过期事件）All right. These two processes are very similar. The part that they have in common, and we know nothing aboutit yet is called the **book returning process**:好的。这两个过程非常相似。它们共同拥有的部分，我们尚未了解的部分被称为**图书归还过程**![Book returning process](images/es/bigpicture/the-book-returning-process.png)  Here's what you see there described with words:在这里，您可以看到用文字描述的内容：- **Any Patron** can **return a book**    任何读者都可以归还图书- If the **checkout is overdue**, it is being unregistered as soon as the **book is returned**    如果借阅逾期，在图书归还时将立即取消登记- In the moment of **returning a book** we start the process of **Fees application**    在归还图书的时刻，我们开始费用申请过程- From the moment of **book checkout**, a patron might not return the book on time. Whenever a **new day starts**we check the **daily sheet** find and **register overdue checkouts**    从图书借阅的那一刻起，读者可能无法按时归还图书。每当新的一天开始时，我们检查每日表格，找到并登记逾期借阅Wait, but what is this **checkout**?  等等，但这个**借阅**是什么？![Definitions](images/es/bigpicture/definitions-2.png)  _- OK, now tell me what is this fee application process    好的，现在告诉我这个费用申请过程是什么_  _- Nope, it is not relevant by now, will get back to it later    不，现在还不相关，稍后会回到这个问题_  _- But wait, why? Shouldn't you get the full picture from the storming?    但等等，为什么？难道你不应该从风暴中获得完整的画面吗？_  _- Yes, but remember, the time has its cost. You always need to focus on the most relevant (at this moment) business part.I promise to get back to this at the next workshop.     是的，但请记住，时间是有成本的。您始终需要关注当前最相关的业务部分。我保证在下次研讨会上回到这个问题。_  _- Fair enough!    那够公平的！_  Fundamental question that raises now is _where do these books come from?_ Looking again at the domain description,we have a notion of a **catalogue**. We modelled it accordingly:  现在提出的基本问题是_这些书是从哪里来的？_再次查看领域描述，我们有一个目录的概念。我们相应地对其进行了建模：![Catalogue](images/es/bigpicture/book-catalogue.png)   Here's what happens:  在这里发生了什么：  - A **library employee** can add a book into a catalogue    图书馆员工可以将一本书添加到目录中  - A specific **book instance** can be **added** as well, thanks to which it can be made **available** under some not defined yet policy    一个特定的图书实例也可以被添加，由于这个原因，它可以根据一些尚未定义的政策变得可用  - Both **Book removed from catalogue** and **Book instance removed from catalogue** are marked with **hot spots**,as they became problematic. We left answering those problems for the future.     从目录中移除图书和从目录中移除图书实例都被标记为热点，因为它们变得有问题。我们将解决这些问题留给未来。  There is one interesting thing we can spot in this simple **catalogue** flow. **A book** is not the same **book** thatwe had in previous processes. To make things clear, let's have a look at new definitions:  在这个简单的目录流程中，我们可以发现一个有趣的事情。一本书与我们在之前的过程中所拥有的书并不相同。为了弄清楚这些事情，让我们看一下新的定义：  ![Catalogue definitions](images/es/bigpicture/book-catalogue-definitions.png)    Spotting such differences helps us in drawing linguistic boundaries, that are one of the heuristics for defining **bounded contexts**. From this moment on, we can assume that we have at least two **bounded contexts**:  发现这样的差异有助于我们划定语言边界，这是定义有界上下文的启发式之一。从这一刻开始，我们可以假设我们至少有两个有界上下文：* **lending** - context containing all business processes logically connected with book lending, including holding, checkout, and return    借阅 - 包含与图书借阅逻辑相关的所有业务过程的上下文，包括预留、借阅和归还  * **catalogue** - contexts for cataloguing books and their instances    目录 - 用于编目图书及其实例的上下文关于有界上下文定义的更多信息将很快添加  __More information on bounded contexts' defining will be added soon__This is more or less where the first iteration of _Big Picture EventStorming_ finished. After this phasewe had a good understanding of how library processes work on high level, and, what is an invaluable outcome,we got the **ubiquitous language** including well described definitions, and initial **bounded contexts**.  这大致是_大局观事件风暴_的第一轮迭代结束的地方。在这个阶段之后，我们对图书馆流程在高层次上的运作有了很好的理解，而且，这是一个无价的成果，我们得到了普遍语言，包括详细描述的定义和初始有界上下文。
